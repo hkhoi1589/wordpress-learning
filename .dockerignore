@@ -1,0 +1,16 @@
+.env
+**/*.pyc
+**/*~
+.dockerignore
+.git
+Dockerfile*
+__pycache__
+app_web.tar
+docker-compose.yml
+dumpdata.sh
+dumpdata_*.json
+members-fixture-LIMIT=9999.json
+properties-all.json
+properties-availabilities-all.json
+Properties_*.csv
+media/

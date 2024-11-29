@@ -1,0 +1,40 @@
+- get_...: Ko tự echo ra, the_...: tự echo ra, have_..., single_...
+- wp_get_post_parent_id(0) == 16 ở page.php? Fix cứng?
+- Template roadmap: https://developer.wordpress.org/themes/basics/template-hierarchy/#Page_display
+- Chỉ có 1 luồng query mỗi trang => mỗi lần custom query nhớ reset
+- Array gọi bằng ['url'], object gọi bằng =>
+- Archive là "blog" cho custom post types
+- WP tự generate ảnh đủ size khi mình upload!
+- List: Xài have_posts() + the_post()
+- Lọc: Custom post type xài custom posts query (xem mu-plugins và single-program, front-page,...) sau đó mới list
+- BE render page, post -> mu-plugins ->| function (for global pages) -> custom queries (for only page) -> FE
+https://wordpress.stackexchange.com/questions/170595/wp-query-object-manipulation-vs-wordpress-functions
+- Reuse code but need to pass args => function.php 
+or else => use get_template_part() instead
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
