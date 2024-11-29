@@ -1,5 +1,4 @@
 <!-- For category, author,..... -->
-
 <?php 
 get_header();
 pageBanner(array(
