@@ -11,6 +11,7 @@
 https://wordpress.stackexchange.com/questions/170595/wp-query-object-manipulation-vs-wordpress-functions
 - Reuse code but need to pass args => function.php 
 or else => use get_template_part() instead
+- Remember "sanitize" every user input
 
 
 
