@@ -24,14 +24,14 @@
                 'meta_key' => 'event_date',
                 'orderBy' => 'meta_value_num',
                 'order' => 'DESC',
-                'meta_query' => array( // filter
-                    array( // upcoming event
-                        'key' => 'event_date',
-                        'compare' => '>=',
-                        'type' => 'numeric',
-                        'value' => date('Ymd')
-                    ),
-                )
+                // 'meta_query' => array( // filter
+                //     array( // upcoming event
+                //         'key' => 'event_date',
+                //         'compare' => '>=',
+                //         'type' => 'numeric',
+                //         'value' => date('Ymd')
+                //     ),
+                // )
             ));
             while ($homePageEvents->have_posts()) {
                 $homePageEvents->the_post();

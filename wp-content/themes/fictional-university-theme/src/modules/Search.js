@@ -27,25 +27,17 @@ class Search {
 
     // Method
     getResults() {
-        const postResults = fetch(
+        fetch(
             `${
                 universityData.root_url
-            }/wp-json/wp/v2/posts?search=${this.searchField.val()}`
+            }/wp-json/university/v1/search?term=${this.searchField.val()}`
         )
             .then((res) => res.json())
-            .catch((err) => console.log('Posts search error:', err));
-
-        const pageResults = fetch(
-            `${
-                universityData.root_url
-            }/wp-json/wp/v2/pages?search=${this.searchField.val()}`
-        )
-            .then((res) => res.json())
-            .catch((err) => console.log('Pages search error', err));
-
-        Promise.all([postResults, pageResults])
-            .then((results) => this.renderResults(results))
-            .catch((err) => console.log(err));
+            .then((result) => this.renderResults(result))
+            .catch(
+                (err) =>
+                    (this.resultsDiv.innerHTML = `Unexpected Error: ${err}`)
+            );
     }
 
     typingLogic() {
@@ -90,32 +82,140 @@ class Search {
         this.isOverlayOpen = false;
     }
 
-    renderResults(results) {
+    renderResults({ general, professors, programs, events, campuses }) {
         //The depth level specifying how deep a nested array structure should be flattened. Defaults to 1.
-        let items = results.flat();
+        // let items = results.flat();
 
         this.resultsDiv.html(`
-			<h2 class="search-overlay__section-title">General Information</h2>
-
-			${
-                items.length
-                    ? `<ul class="link-list min-list">`
-                    : '<p>No general infomation matches that search.</p>'
-            }
-
-			${items
-                .map(
-                    (item) => `
-				<li>
-					<a href="${item.link}">${item.title.rendered}</a> ${
-                        item.type == 'post' ? `by ${item.authorName}` : ''
+			<div class="row">
+				<div class="one-third">
+					<h2 class="search-overlay__section-title">General Information</h2>
+					${
+                        general.length
+                            ? `<ul class="link-list min-list">`
+                            : '<p>No general infomation matches that search.</p>'
                     }
-				</li>
-				`
-                )
-                .join('')}
 
-			${items.length ? '</ul>' : ''}
+					${general
+                        .map(
+                            (item) => `
+						<li>
+							<a href="${item.permalink}">${item.title}</a> ${
+                                item.postType == 'post'
+                                    ? `by ${item.authorName}`
+                                    : ''
+                            }
+						</li>
+						`
+                        )
+                        .join('')}
+
+					${general.length ? '</ul>' : ''}
+				</div>
+
+				<div class="one-third">
+					<h2 class="search-overlay__section-title">Programs</h2>
+					${
+                        programs.length
+                            ? `<ul class="link-list min-list">`
+                            : `<p>No programs match that search. <a href="${universityData.root_url}/programs">View all programs</a></p>`
+                    }
+
+					${programs
+                        .map(
+                            (item) => `
+						<li>
+							<a href="${item.permalink}">${item.title}</a>
+						</li>
+						`
+                        )
+                        .join('')}
+
+					${programs.length ? '</ul>' : ''}
+
+					<h2 class="search-overlay__section-title">Professors</h2>
+					${
+                        professors.length
+                            ? `<ul class="professor-cards">`
+                            : `<p>No professors match that search.</p>`
+                    }
+
+					${professors
+                        .map(
+                            (item) => `
+							<li class="professor-card__list-item">
+								<a class="professor-card" href="${item.permalink}">
+									<img class="professor-card__image" src="${item.image}" alt="professor__image.png" />
+									<span class="professor-card__name">${item.title}</span>
+								</a>
+							</li>
+							`
+                        )
+                        .join('')}
+
+					${professors.length ? '</ul>' : ''}
+				</div>
+
+				<div class="one-third">
+					<h2 class="search-overlay__section-title">Campuses</h2>
+					${
+                        campuses.length
+                            ? `<ul class="link-list min-list">`
+                            : `<p>No campuses match that search. <a href="${universityData.root_url}/campuses">View all campuses</a></p>`
+                    }
+
+					${campuses
+                        .map(
+                            (item) => `
+						<li>
+							<a href="${item.permalink}">${item.title}</a>
+						</li>
+						`
+                        )
+                        .join('')}
+
+					${campuses.length ? '</ul>' : ''}
+
+					<h2 class="search-overlay__section-title">Events</h2>
+					${
+                        events.length
+                            ? ''
+                            : `<p>No events match that search. <a href="${universityData.root_url}/events">View all events</a></p></p>`
+                    }
+
+					${events
+                        .map(
+                            (item) => `
+							<div class="event-summary">
+								<a class="event-summary__date t-center" href="${item.permalink}">
+									<span class="event-summary__month">
+										${item.month}
+									</span>
+									<span class="event-summary__day">
+										${item.day}
+									</span>
+								</a>
+								<div class="event-summary__content">
+									<h5 class="event-summary__title headline headline--tiny">
+										<a href="${item.permalink}">
+											${item.title}
+										</a>
+									</h5>
+									<p>
+										${item.description}
+										<a href="${item.permalink}" class="nu gray">Learn more</a>
+									</p>
+								</div>
+							</div>
+							`
+                        )
+                        .join('')}
+
+					${events.length ? '</ul>' : ''}
+				</div>
+			</div>
+
+			
 		`);
 
         this.isSpinnerVisible = false;

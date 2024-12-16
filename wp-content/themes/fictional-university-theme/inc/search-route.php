@@ -10,6 +10,7 @@
 		$mainQuery = new WP_Query(array(
 			'post_type' => array('post', 'page', 'professor', 'program', 'campus', 'event'),
 			's' => sanitize_text_field($data['term']),
+			'posts_per_page' => -1,
 		));
 
 		$results = array(
@@ -23,37 +24,110 @@
 		while ($mainQuery->have_posts()) {
 			$mainQuery->the_post();
 
-			$column = '';
+			if (get_post_type() == 'professor') {
+				array_push($results['professors'], array(
+					'title' => get_the_title(),
+					'permalink' => get_the_permalink(),
+					'image' => get_the_post_thumbnail_url(0, 'professorLandscape'),
+				));
+			} elseif (get_post_type() == 'program') {
+				$relatedCampuses = get_field('related_campus');
 
-			switch(get_post_type()) {
-				case 'professor': 
-					$column = 'professors'; 
-					break;
+				if ($relatedCampuses) {
+					foreach ($relatedCampuses as $campus) {
+						array_push($results['campuses'], array(
+							'title' => get_the_title($campus),
+							'permalink' => get_the_permalink($campus),
+						));
+					}
+				}
 
-				case 'program': 
-					$column = 'programs'; 
-					break;
+				array_push($results['programs'], array(
+					'title' => get_the_title(),
+					'permalink' => get_the_permalink(),
+					'id' => get_the_id(),
+				));
+			} elseif (get_post_type() == 'event') {
+				$eventDate = new DateTime(get_field('event_date'));
+				$description = '';
 
-				case 'campus': 
-					$column = 'campuses'; 
-					break;
+				if (has_excerpt()) {
+					$description = get_the_excerpt();
+				} else {
+					$description = wp_trim_words(get_the_content(), 18);
+				}
 
-				case 'event': 
-					$column = 'events'; 
-					break;
-
-				default: 
-					$column = 'general'; 
-					break;
-			};
-
-			//push the data in the #2 parameter onto the $results array
-			array_push($results[$column], array(
-				'title' => get_the_title(),
-				'permalink' => get_the_permalink()
-			));
+				array_push($results['events'], array(
+					'title' => get_the_title(),
+					'permalink' => get_the_permalink(),
+					'month' => $eventDate->format('M'),
+					'day' => $eventDate->format('d'),
+					'description' => $description,
+				));
+			} elseif (get_post_type() == 'campus') {
+				array_push($results['campuses'], array(
+					'title' => get_the_title(),
+					'permalink' => get_the_permalink(),
+				));
+			} else {
+				array_push($results['general'], array(
+					'title' => get_the_title(),
+					'permalink' => get_the_permalink(),
+					'postType' => get_post_type(),
+					'authorName' => get_the_author(),
+				));
+			}
 		}
 
+		if ($results['programs']) {
+			$programMetaQuery = array('relation' => 'OR');
+			foreach ($results['programs'] as $item) {
+				array_push($programMetaQuery, array(
+					'key' => 'related_programs',
+					'compare' => 'LIKE',
+					'value' => $item['id'],
+				));
+			}
+			$programRelationshipQuery = new WP_Query(array(
+				'post_type' => array('professor', 'event'),
+				'meta_query' => $programMetaQuery
+			));
+			while ($programRelationshipQuery->have_posts()) {
+				$programRelationshipQuery->the_post();
+
+				if (get_post_type() == 'event') {
+					$eventDate = new DateTime(get_field('event_date'));
+					$description = '';
+
+					if (has_excerpt()) {
+						$description = get_the_excerpt();
+					} else {
+						$description = wp_trim_words(get_the_content(), 18);
+					}
+
+					array_push($results['events'], array(
+						'title' => get_the_title(),
+						'permalink' => get_the_permalink(),
+						'month' => $eventDate->format('M'),
+						'day' => $eventDate->format('d'),
+						'description' => $description,
+					));
+				}
+				
+				if (get_post_type() == 'professor') {
+					array_push($results['professors'], array(
+						'title' => get_the_title(),
+						'permalink' => get_the_permalink(),
+						'image' => get_the_post_thumbnail_url(0, 'professorLandscape'),
+					));
+				}
+			}
+
+			// remove duplicate in array
+			$results['events'] = array_values(array_unique($results['events'], SORT_REGULAR));
+			$results['professors'] = array_values(array_unique($results['professors'], SORT_REGULAR));
+		}
+		
 		return $results;
 	};
 
