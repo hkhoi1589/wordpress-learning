@@ -74,6 +74,7 @@ class Search {
         this.searchField.val('');
         setTimeout(() => this.searchField.trigger('focus'), 300);
         this.isOverlayOpen = true;
+		return false; // prevent navigate to /search page from this.openButton element
     }
 
     closeOverlay() {
