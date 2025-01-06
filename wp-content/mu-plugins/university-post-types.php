@@ -3,6 +3,8 @@
 function university_post_types() {
     // Event Post Type
     register_post_type('event', array(
+		'capability_type' => 'event', // inherit event types permissions role user
+		'map_meta_cap' => true, // only allow user role with event permissions see event tab in dashboard (dont count admin)
         'supports' => array('title', 'editor', 'excerpt'),
         'rewrite' => array('slug' => 'events'),
         'has_archive' => true,
@@ -52,6 +54,8 @@ function university_post_types() {
 
 	// Campus Post Type
     register_post_type('campus', array(
+		'capability_type' => 'campus', // inherit campus types permissions role user
+		'map_meta_cap' => true, // only allow user role with campus permissions see campus tab in dashboard (dont count admin)
         'supports' => array('title', 'editor'),
         'rewrite' => array('slug' => 'campuses'),
         'has_archive' => true,
