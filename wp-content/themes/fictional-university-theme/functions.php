@@ -56,6 +56,7 @@ function university_files() {
 	// env?
 	wp_localize_script('university_main_js', 'universityData', array(
 		'root_url' => get_site_url(),
+		'nonce' => wp_create_nonce('wp_rest'),
 	));
 }
 

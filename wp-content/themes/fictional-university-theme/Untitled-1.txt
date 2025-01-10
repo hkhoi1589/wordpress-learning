@@ -13,7 +13,8 @@ https://wordpress.stackexchange.com/questions/170595/wp-query-object-manipulatio
 or else => use get_template_part() instead
 - Dùng the_field để gọi custom fields
 !!! Always make sure to validate user input fore using it, and to escape esc_url(), esc_html() on output: https://developer.wordpress.org/apis/security/
-
+- Xài redirect nhớ exit;
+- Ở js, xài this trong method thì nhớ xài bind(this) ở event
 
 
 
